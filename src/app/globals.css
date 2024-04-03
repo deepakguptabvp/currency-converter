@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -30,4 +30,8 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+} */
+body{
+  background: #759890;
+  /* https://booster.io/wp-content/uploads/gateways-currency-e1443808519595.png */
 }
