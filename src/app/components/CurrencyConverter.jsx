@@ -11,15 +11,22 @@ const CurrencyConverter = () => {
   const [amount, setAmount] = useState(1);
   const [fromCurrency, setfromCurrency] = useState("USD");
   const [toCurrency, settoCurrency] = useState("INR");
-  const [convertedAmount, setConvertedAmount] = useState(null)
-  const [converting, setConverting] = useState(false)
+  const [convertedAmount, setConvertedAmount] = useState(null);
+  const [converting, setConverting] = useState(false);
+  const [favourites, setFavourites] = useState(
+    JSON.parse(localStorage.getItem("favourites")) || ["INR", "USD"]
+  );
 
   const fetchCurrencies = async () => {
     try {
       const res = await fetch("https://api.frankfurter.app/currencies");
       const data = await res.json();
 
+      // console.log(data + "hellooo" );
       setCurrencies(Object.keys(data));
+      // console.log(data + "hellooo" + "22222");
+      
+
     } catch (error) {
       console.log("Error fetching currencies", error);
     }
@@ -29,14 +36,37 @@ const CurrencyConverter = () => {
     fetchCurrencies();
   }, []);
 
-  console.log(currencies);
+  // console.log(currencies);
 
   const convertCurrency = async () => {
-    //CONVERSION LOGC
+    if (!amount) return;
+    setConverting(true);
+    try {
+      const res = await fetch(
+        `https://api.frankfurter.app/latest?amount=${amount}&from=${fromCurrency}&to=${toCurrency}`
+      );
+
+      const data = await res.json();
+      setConvertedAmount(data.rates[toCurrency] + " " + toCurrency);
+      console.log(setConvertedAmount);
+    } catch (error) {
+      console.log("Error fetching currencies", error);
+    } finally {
+      setConverting(false);
+    }
   };
 
   const handleFavourite = (currency) => {
-    //  add to favourite
+    let updatedFavourites = [...favourites];
+    if (favourites.includes(currency)) {
+      updatedFavourites = updatedFavourites.filter((fav) => fav !== currency);
+    } else {
+      updatedFavourites.push(currency);
+    }
+
+    setFavourites(updatedFavourites);
+    localStorage.setItem("favourites", JSON.stringify(updatedFavourites));
+    console.log(localStorage + "localStorage");
   };
 
   const swapCurrencies = () => {
@@ -45,7 +75,7 @@ const CurrencyConverter = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto my-20 p-5 bg-white rounded-2xl shadow-2xl">
+    <div className="max-w-xl mx-auto my-10 p-5 bg-white rounded-2xl shadow-2xl">
       <h2 className="mb-5 text-4xl font-semibold text-grey-700 text-center">
         Currency Converter
       </h2>
@@ -53,6 +83,7 @@ const CurrencyConverter = () => {
       {/* From part of Currency */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
         <CurrencyDropdown
+          favourites={favourites}
           currencies={currencies}
           title="From"
           currency={fromCurrency}
@@ -72,6 +103,7 @@ const CurrencyConverter = () => {
 
         {/* To part of Currency */}
         <CurrencyDropdown
+          favourites={favourites}
           currencies={currencies}
           title="To"
           currency={toCurrency}
@@ -101,15 +133,18 @@ const CurrencyConverter = () => {
       <div className="flex justify-end mt-6">
         <button
           onClick={convertCurrency}
-          className="px-5 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className={`px-5 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 
+          ${converting ? "animate-pulse" : ""}`}
         >
           Convert
         </button>
       </div>
 
-      <div className="mt-4 text-lg font-medium text-right text-green-600">
-        Converted Amount : 166.76 USD
-      </div>
+      {convertedAmount && (
+        <div className="mt-4 text-lg font-medium text-right text-green-600">
+          Converted Amount : {convertedAmount}
+        </div>
+      )}
     </div>
   );
 };
