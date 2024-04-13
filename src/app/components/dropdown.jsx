@@ -6,11 +6,11 @@ const CurrencyDropdown = ({
   currencies,
   currency,
   setCurrency,
-  favourites,
+  favorites,
   handleFavourite,
   title = "",
 }) => {
-  const isFavourite = (curr) => favourites.includes(curr);
+  const isFavourite = (curr) => favorites.includes(curr);
 
   return (
     <div>
@@ -27,9 +27,9 @@ const CurrencyDropdown = ({
           onChange={(e) => setCurrency(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          {/* render favourite currencies */}
 
-          {favourites.map((currency) => {
+
+          {favorites.map((currency) => {
             return (
               <option className="bg-gray-200" value={currency} key={currency}>
                 {currency}
@@ -40,7 +40,7 @@ const CurrencyDropdown = ({
           <hr />
 
           {currencies
-            .filter((c) => !favourites.includes(c))
+            .filter((c) => !favorites.includes(c))
             .map((currency) => {
               return (
                 <option value={currency} key={currency}>

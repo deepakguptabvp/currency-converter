@@ -14,8 +14,9 @@ const CurrencyConverter = () => {
   const [convertedAmount, setConvertedAmount] = useState(null);
   const [converting, setConverting] = useState(false);
   const [favourites, setFavourites] = useState(
-    JSON.parse(localStorage.getItem("favourites")) || ["INR", "USD"]
+    typeof window !== "undefined" ? JSON.parse(localStorage.getItem("favourites")) || ["INR", "USD"] : ""
   );
+
 
   const fetchCurrencies = async () => {
     try {
@@ -25,7 +26,7 @@ const CurrencyConverter = () => {
       // console.log(data + "hellooo" );
       setCurrencies(Object.keys(data));
       // console.log(data + "hellooo" + "22222");
-      
+
 
     } catch (error) {
       console.log("Error fetching currencies", error);
@@ -35,6 +36,11 @@ const CurrencyConverter = () => {
   useEffect(() => {
     fetchCurrencies();
   }, []);
+
+  // useEffect(() => {
+    // Perform localStorage action
+  //   const item = localStorage.getItem('key')
+  // }, [])
 
   // console.log(currencies);
 
